@@ -1,1 +1,4 @@
-export { loginMiddleware, checkDuplicateUsernameOrEmail } from './authentication.middleware';
+export {
+  loginMiddleware,
+  checkDuplicateUsernameOrEmail,
+} from './authentication.middleware'
