@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 
-mongoose.Promise = global.Promise
 // Set up default mongoose connection
 const mongoDB = 'mongodb://localhost:27017/doodaoma'
 mongoose.connect(mongoDB, {})

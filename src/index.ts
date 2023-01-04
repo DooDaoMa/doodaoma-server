@@ -1,18 +1,14 @@
-import express from 'express'
+import express, { json } from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import dotenv from 'dotenv'
-import bodyParser from 'body-parser'
 import { authRouter } from './routes'
 import { requireJWTAuth } from './config/jwt.config'
-
-dotenv.config()
+import { PORT } from './config/constant.config'
 
 const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer)
-const port = process.env.PORT || 8000
-app.use(bodyParser.json())
+app.use(json())
 
 // register router
 app.use(authRouter)
@@ -25,6 +21,6 @@ app.get('/', (req, res) => {
   res.send('Express + TypeScript server')
 })
 
-httpServer.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
 })
