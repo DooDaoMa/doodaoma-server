@@ -6,43 +6,52 @@ export const loginMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const user = await User.findOne({ username: req.body.username })
-  if (user) next()
-  else res.send('Wrong username and password')
+  try {
+    const user = await User.findOne({ username: req.body.username })
+    if (user) {
+      if (user.validPassword(req.body.password)) {
+        req.user = user
+        next()
+      } else {
+        return res.status(400).send({
+          message: 'Wrong Password',
+        })
+      }
+    } else {
+      return res.status(400).send({
+        message: 'User not found.',
+      })
+    }
+  } catch (err) {
+    return res.status(500).send()
+  }
 }
-export const checkDuplicateUsernameOrEmail = (
+export const checkDuplicateUsernameOrEmail = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  // Username
-  User.findOne({
-    username: req.body.username,
-  }).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err })
-      return
-    }
-
+  // Check duplicate username
+  try {
+    const user = await User.findOne({ username: req.body.username })
     if (user) {
       res.status(400).send({ message: 'Failed! Username is already in use!' })
       return
     }
-  })
-
-  // Email
-  User.findOne({
-    email: req.body.email,
-  }).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err })
-      return
-    }
-
+  } catch (err) {
+    res.status(500).send({ message: err })
+    return
+  }
+  // Check duplicate email
+  try {
+    const user = await User.findOne({ username: req.body.email })
     if (user) {
       res.status(400).send({ message: 'Failed! Email is already in use!' })
       return
     }
-    next()
-  })
+  } catch (err) {
+    res.status(500).send({ message: err })
+    return
+  }
+  next()
 }
