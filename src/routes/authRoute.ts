@@ -1,34 +1,41 @@
 import express, { Request, Response } from 'express'
-import { loginMiddleware } from '../middlewares'
-import jwt from 'jwt-simple'
+import { loginMiddleware, checkDuplicateUsernameOrEmail } from '../middlewares'
+import jwt from 'jsonwebtoken'
 import { User } from '../models'
+import { SECRET_KEY } from '../config/constant.config'
 
 export const authRouter = express.Router()
 
 authRouter.post('/login', loginMiddleware, async (req, res) => {
   try {
-    const payload = {
-      sub: req.body.username,
-      iat: new Date().getTime(), //มาจากคำว่า issued at time (สร้างเมื่อ)
+    if (req.user) {
+      res.status(201).send(
+        jwt.sign({ data: req.body.username }, SECRET_KEY, {
+          expiresIn: '1h',
+        }),
+      )
     }
-    const SECRET = 'MY_SECRET_KEY' //ในการใช้งานจริง คีย์นี้ให้เก็บเป็นความลับ
-    res.status(201).send(jwt.encode(payload, SECRET))
   } catch {
     res.status(500)
   }
 })
 
-authRouter.post('/signup', async (req: Request, res: Response) => {
-  const payload = req.body
-  try {
-    const newUser = new User({
-      username: payload.username,
-      password: payload.password,
-      email: payload.email,
-    })
-    await newUser.save()
-    res.status(201).end()
-  } catch (error) {
-    res.status(400).json(error)
-  }
-})
+authRouter.post(
+  '/signup',
+  checkDuplicateUsernameOrEmail,
+  async (req: Request, res: Response) => {
+    const payload = req.body
+    try {
+      const newUser = new User({
+        username: payload.username,
+        password: payload.password,
+        email: payload.email,
+      })
+      newUser.setPassword(payload.password)
+      await newUser.save()
+      res.status(201).end()
+    } catch (error) {
+      res.status(400).json(error)
+    }
+  },
+)
