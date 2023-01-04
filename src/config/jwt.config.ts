@@ -1,6 +1,6 @@
 import passport from 'passport'
-import { User } from '../models'
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
+import { User } from '../models'
 import { SECRET_KEY } from './constant.config'
 
 export type User = {

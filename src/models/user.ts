@@ -1,6 +1,6 @@
+import crypto from 'crypto'
 import { Schema, Model } from 'mongoose'
 import { db } from '../config/database.config'
-import crypto from 'crypto'
 import { IUser, IUserMethods } from 'types/user.types'
 
 // Define a schema
