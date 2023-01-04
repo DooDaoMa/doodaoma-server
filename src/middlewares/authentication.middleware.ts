@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { User } from '../models'
+import { User } from '../models/user'
 
 export const loginMiddleware = async (
   req: Request,
@@ -13,17 +13,17 @@ export const loginMiddleware = async (
         req.user = user
         next()
       } else {
-        return res.status(400).send({
+        return res.status(400).json({
           message: 'Wrong Password',
         })
       }
     } else {
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'User not found.',
       })
     }
   } catch (err) {
-    return res.status(500).send()
+    return res.status(500).json()
   }
 }
 export const checkDuplicateUsernameOrEmail = async (
@@ -35,22 +35,22 @@ export const checkDuplicateUsernameOrEmail = async (
   try {
     const user = await User.findOne({ username: req.body.username })
     if (user) {
-      res.status(400).send({ message: 'Failed! Username is already in use!' })
+      res.status(400).json({ message: 'Failed! Username is already in use!' })
       return
     }
   } catch (err) {
-    res.status(500).send({ message: err })
+    res.status(500).json({ message: err })
     return
   }
   // Check duplicate email
   try {
     const user = await User.findOne({ username: req.body.email })
     if (user) {
-      res.status(400).send({ message: 'Failed! Email is already in use!' })
+      res.status(400).json({ message: 'Failed! Email is already in use!' })
       return
     }
   } catch (err) {
-    res.status(500).send({ message: err })
+    res.status(500).json({ message: err })
     return
   }
   next()

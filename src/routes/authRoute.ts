@@ -1,7 +1,10 @@
 import { Request, Response, Router } from 'express'
 import { sign } from 'jsonwebtoken'
-import { loginMiddleware, checkDuplicateUsernameOrEmail } from '../middlewares'
-import { User } from '../models'
+import {
+  loginMiddleware,
+  checkDuplicateUsernameOrEmail,
+} from '../middlewares/authentication.middleware'
+import { User } from '../models/user'
 import { SECRET_KEY } from '../config/constant.config'
 
 export const authRouter = Router()
@@ -9,7 +12,7 @@ export const authRouter = Router()
 authRouter.post('/login', loginMiddleware, async (req, res) => {
   try {
     if (req.user) {
-      res.status(201).send(
+      res.status(201).json(
         sign({ data: req.body.username }, SECRET_KEY, {
           expiresIn: '1h',
         }),

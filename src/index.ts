@@ -14,11 +14,11 @@ app.use(json())
 app.use(authRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
-  res.send('success')
+  res.json('success')
 })
 
 app.get('/', (req, res) => {
-  res.send('Express + TypeScript server')
+  res.json('Express + TypeScript server')
 })
 
 httpServer.listen(PORT, () => {
