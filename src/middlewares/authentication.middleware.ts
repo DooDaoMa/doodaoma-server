@@ -23,7 +23,7 @@ export const loginMiddleware = async (
       })
     }
   } catch (err) {
-    return res.status(500).json()
+    return res.status(500).json({ message: err })
   }
 }
 export const checkDuplicateUsernameOrEmail = async (

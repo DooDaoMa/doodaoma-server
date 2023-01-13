@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express'
+import { Router } from 'express'
 import { sign } from 'jsonwebtoken'
 import {
   loginMiddleware,
@@ -18,27 +18,23 @@ authRouter.post('/login', loginMiddleware, async (req, res) => {
         }),
       )
     }
-  } catch {
-    res.status(500)
+  } catch (err) {
+    res.status(500).json({ message: err })
   }
 })
 
-authRouter.post(
-  '/signup',
-  checkDuplicateUsernameOrEmail,
-  async (req: Request, res: Response) => {
-    const payload = req.body
-    try {
-      const newUser = new User({
-        username: payload.username,
-        password: payload.password,
-        email: payload.email,
-      })
-      newUser.setPassword(payload.password)
-      await newUser.save()
-      res.status(201).end()
-    } catch (error) {
-      res.status(400).json(error)
-    }
-  },
-)
+authRouter.post('/signup', checkDuplicateUsernameOrEmail, async (req, res) => {
+  const payload = req.body
+  try {
+    const newUser = new User({
+      username: payload.username,
+      password: payload.password,
+      email: payload.email,
+    })
+    newUser.setPassword(payload.password)
+    await newUser.save()
+    res.status(201).json({ message: 'success' })
+  } catch (error) {
+    res.status(400).json({ message: error })
+  }
+})
