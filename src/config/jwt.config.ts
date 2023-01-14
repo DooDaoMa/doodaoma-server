@@ -3,24 +3,25 @@ import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
 import { User } from '../models/user'
 import { SECRET_KEY } from './constant.config'
 
-export type User = {
-  id: number
-  email: string
-}
-export type JwtPayload = User & {
-  iat: number
-  data: string
-}
-
 // authentication Strategy
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: SECRET_KEY,
+  passReqToCallback: true,
 }
-export const jwtAuth = new JwtStrategy(jwtOptions, async (payload, done) => {
-  const user = await User.findOne({ username: payload.data })
-  if (user) done(null, true)
-  else done(null, false)
-})
+export const jwtAuth = new JwtStrategy(
+  jwtOptions,
+  async (req, payload, done) => {
+    try {
+      const user = await User.findOne({ username: payload.data })
+      if (user) {
+        req.user = user
+        done(null, user)
+      } else done(null, false)
+    } catch (err) {
+      done(err, false)
+    }
+  },
+)
 passport.use(jwtAuth)
 export const requireJWTAuth = passport.authenticate('jwt', { session: false })

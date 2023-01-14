@@ -2,6 +2,7 @@ import { createServer } from 'http'
 import express, { json } from 'express'
 import { Server } from 'socket.io'
 import { authRouter } from './routes/authRoute'
+import { accountRouter } from './routes/account'
 import { requireJWTAuth } from './config/jwt.config'
 import { PORT } from './config/constant.config'
 
@@ -12,6 +13,7 @@ app.use(json())
 
 // register router
 app.use(authRouter)
+app.use('/api/account', accountRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
   res.json('success')
