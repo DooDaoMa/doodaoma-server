@@ -1,13 +1,15 @@
 import { Router } from 'express'
 import { requireJWTAuth } from '../config/jwt.config'
+import { IUser } from 'types/user.types'
 
 export const accountRouter = Router()
 
 accountRouter.get('/', requireJWTAuth, (req, res) => {
-  if (req.user) {
+  const user = req.user as IUser
+  if (user) {
     res.status(200).send({
-      username: req.user.username,
-      email: req.user.email,
+      username: user.username,
+      email: user.email,
     })
   }
 })

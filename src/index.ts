@@ -1,6 +1,7 @@
 import { createServer } from 'http'
 import express, { json } from 'express'
 import { Server } from 'socket.io'
+import cors from 'cors'
 import { authRouter } from './routes/authRoute'
 import { accountRouter } from './routes/account'
 import { requireJWTAuth } from './config/jwt.config'
@@ -10,6 +11,13 @@ const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer)
 app.use(json())
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://doodaoma-web.up.railway.app/'],
+    preflightContinue: true,
+    credentials: true,
+  }),
+)
 
 // register router
 app.use(authRouter)
