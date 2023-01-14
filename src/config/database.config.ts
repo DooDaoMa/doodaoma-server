@@ -1,8 +1,11 @@
 import mongoose from 'mongoose'
+import { DATABASE_URL } from './constant.config'
 
 // Set up default mongoose connection
-const mongoDB = 'mongodb://localhost:27017/doodaoma'
-mongoose.connect(mongoDB, {})
+const mongoDB = DATABASE_URL
+mongoose.connect(mongoDB, {
+  dbName: 'doodaoma',
+})
 
 // Get the default connection
 export const db = mongoose.connection
