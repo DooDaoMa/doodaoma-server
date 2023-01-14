@@ -1,7 +1,7 @@
 import { createServer } from 'http'
 import express, { json } from 'express'
 import { Server } from 'socket.io'
-import { authRouter } from './routes'
+import { authRouter } from './routes/authRoute'
 import { requireJWTAuth } from './config/jwt.config'
 import { PORT } from './config/constant.config'
 
