@@ -24,6 +24,7 @@
   "rules": {
     "import/first": "error",
     "import/newline-after-import": "error",
-    "import/order": "error"
+    "import/order": "error",
+    "@typescript-eslint/ban-types": "off"
   }
 }

@@ -1,19 +1,26 @@
 import { createServer } from 'http'
-import express from 'express'
+import express, { json } from 'express'
 import { Server } from 'socket.io'
-import * as dotenv from 'dotenv'
-
-dotenv.config()
+import { authRouter } from './routes/authRoute'
+import { requireJWTAuth } from './config/jwt.config'
+import { PORT } from './config/constant.config'
 
 const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer)
-const port = process.env.PORT || 8000
+app.use(json())
 
-app.get('/', (req, res) => {
-  res.send('Express + TypeScript server')
+// register router
+app.use(authRouter)
+
+app.get('/home', requireJWTAuth, (req, res) => {
+  res.json('success')
 })
 
-httpServer.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
+app.get('/', (req, res) => {
+  res.json('Express + TypeScript server')
+})
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
 })
