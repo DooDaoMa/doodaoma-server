@@ -11,14 +11,14 @@ const io = new Server(httpServer)
 app.use(json())
 
 // register router
-app.use(authRouter)
+app.use('/api/auth', authRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
   res.json('success')
 })
 
 app.get('/', (req, res) => {
-  res.json('Express + TypeScript server')
+  res.json('Doodaoma server')
 })
 
 httpServer.listen(PORT, () => {
