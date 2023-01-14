@@ -7,21 +7,16 @@ import { SECRET_KEY } from './constant.config'
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: SECRET_KEY,
-  passReqToCallback: true,
 }
-export const jwtAuth = new JwtStrategy(
-  jwtOptions,
-  async (req, payload, done) => {
-    try {
-      const user = await User.findOne({ username: payload.data })
-      if (user) {
-        req.user = user
-        done(null, user)
-      } else done(null, false)
-    } catch (err) {
-      done(err, false)
-    }
-  },
-)
+export const jwtAuth = new JwtStrategy(jwtOptions, async (payload, done) => {
+  try {
+    const user = await User.findOne({ username: payload.data })
+    if (user) {
+      return done(null, user)
+    } else return done(null, false)
+  } catch (err) {
+    return done(err, false)
+  }
+})
 passport.use(jwtAuth)
 export const requireJWTAuth = passport.authenticate('jwt', { session: false })
