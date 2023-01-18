@@ -7,7 +7,7 @@ import {
 import { User } from '../models/user'
 import { SECRET_KEY } from '../config/constant.config'
 
-export const authRouter = Router()
+const authRouter = Router()
 
 authRouter.post('/login', loginMiddleware, async (req, res) => {
   try {
@@ -38,3 +38,5 @@ authRouter.post('/signup', checkDuplicateUsernameOrEmail, async (req, res) => {
     res.status(400).json({ message: error })
   }
 })
+
+export { authRouter }

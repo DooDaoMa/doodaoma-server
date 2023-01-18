@@ -4,3 +4,4 @@ dotenv.config()
 
 export const SECRET_KEY = process.env.SECRET_KEY || 'SECRET'
 export const PORT = process.env.PORT || 8000
+export const IS_DEBUG = process.env.NODE_ENV !== 'production'
