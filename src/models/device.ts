@@ -1,4 +1,4 @@
-import { Model, Schema } from 'mongoose'
+import { Schema } from 'mongoose'
 import { db } from '../config/database.config'
 import { IDevice } from '../types/device.types'
 
