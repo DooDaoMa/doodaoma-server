@@ -4,4 +4,5 @@ export interface IDevice {
   description: string
   driverInfo: string
   driverVersion: string
+  isConnected: boolean
 }

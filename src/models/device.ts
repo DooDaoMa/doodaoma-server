@@ -8,6 +8,7 @@ const DeviceSchema = new Schema<IDevice>({
   description: String,
   driverInfo: String,
   driverVersion: String,
+  isConnected: Boolean,
 })
 
 export const Device = db.model<IDevice>('Device', DeviceSchema)

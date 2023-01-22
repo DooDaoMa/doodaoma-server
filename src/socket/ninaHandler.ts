@@ -1,7 +1,7 @@
 import { Namespace } from 'socket.io'
 import { Device } from '../models/device'
 import { IDevice } from '../types/device.types'
-import { debugEmit } from './handler'
+import { emitDebug, emitError, emitMessage } from './handler'
 
 export default {
   register: (namespace: Namespace) => {
@@ -33,10 +33,12 @@ export default {
           socket.data.deviceInfo
         const device = await Device.findOne({ deviceId })
         if (device !== null) {
-          debugEmit(socket, 'Already created device')
+          emitDebug(socket, 'Already created device')
+          device.isConnected = true
+          await device.save()
           next()
         } else {
-          debugEmit(socket, 'Create new device')
+          emitDebug(socket, 'Create new device')
           const device = new Device({
             deviceId,
             name,
@@ -57,8 +59,21 @@ export default {
       }
     })
     namespace.on('connection', (socket) => {
-      namespace.on('disconnecting', () => {
-        console.log('disconnecting')
+      socket.on('disconnecting', async () => {
+        try {
+          const device = await Device.findOne({
+            deviceId: socket.data.deviceInfo.deviceId,
+          })
+          if (device !== null) {
+            device.isConnected = false
+            console.log(socket.connected)
+            await device.save()
+            emitMessage(socket, 'Disconnect device: Success')
+          }
+          emitMessage(socket, 'Disconnect device: Device not found')
+        } catch (error) {
+          emitError(socket, error)
+        }
       })
     })
   },

@@ -11,8 +11,16 @@ export default {
   },
 }
 
-export function debugEmit(socket: Socket, ...args: any[]) {
+export function emitDebug(socket: Socket, ...args: any[]) {
   if (IS_DEBUG) {
     socket.emit('debug', args)
   }
+}
+
+export function emitMessage(socket: Socket, ...args: any[]) {
+  socket.emit('message', args)
+}
+
+export function emitError(socket: Socket, ...args: any[]) {
+  socket.emit('error', args)
 }
