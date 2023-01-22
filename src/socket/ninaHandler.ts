@@ -34,6 +34,7 @@ export default {
       if (device !== null) {
         device.isConnected = socket.connected
         await device.save()
+        emitDebug(socket, 'Device already exists')
       } else {
         const newDevice = new Device({
           deviceId,
@@ -44,6 +45,7 @@ export default {
           isConnected: socket.connected,
         })
         await newDevice.save()
+        emitDebug(socket, 'Create new device')
       }
 
       socket.on('disconnecting', async () => {
@@ -52,11 +54,11 @@ export default {
           if (device !== null) {
             device.isConnected = socket.connected
             await device.save()
-            return socket.emit('message', 'Disconnect device successfully')
+            return emitMessage(socket, 'Disconnect device successfully')
           }
-          socket.emit('message', 'Device not found')
+          emitMessage(socket, 'Device not found')
         } catch (error) {
-          socket.emit('error', error)
+          emitError(socket, error)
         }
       })
     })
