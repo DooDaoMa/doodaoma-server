@@ -23,7 +23,7 @@ export default {
       })
     })
     namespace.on('connection', (socket) => {
-      namespace.on('disconnecting', () => {
+      socket.on('disconnecting', () => {
         console.log('disconnecting')
       })
     })
