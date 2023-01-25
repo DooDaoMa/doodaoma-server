@@ -32,6 +32,10 @@ export default {
         socket.data.deviceInfo
       const device = await Device.findOne({ deviceId })
       if (device !== null) {
+        device.name = name
+        device.description = description
+        device.driverInfo = driverInfo
+        device.driverVersion = driverVersion
         device.isConnected = socket.connected
         await device.save()
         emitDebug(socket, 'Device already exists')
