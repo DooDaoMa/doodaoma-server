@@ -1,13 +1,18 @@
 import { createServer } from 'http'
 import express, { json } from 'express'
 import { Server } from 'socket.io'
+import cors from 'cors'
 import { authRouter } from './routes/authRoute'
 import { requireJWTAuth } from './config/jwt.config'
 import { PORT } from './config/constant.config'
+import handler from './socket/handler'
 
 const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer)
+handler.registerSocketHandler(io)
+
+app.use(cors())
 app.use(json())
 
 // register router

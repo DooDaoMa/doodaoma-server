@@ -26,6 +26,7 @@ export const loginMiddleware = async (
     return res.status(500).json({ message: err })
   }
 }
+
 export const checkDuplicateUsernameOrEmail = async (
   req: Request,
   res: Response,
