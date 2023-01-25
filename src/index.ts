@@ -4,8 +4,8 @@ import { Server } from 'socket.io'
 import cors from 'cors'
 import { authRouter } from './routes/authRoute'
 import { requireJWTAuth } from './config/jwt.config'
-import { PORT } from './config/constant.config'
 import handler from './socket/handler'
+import { PORT } from './config/constant.config'
 
 const app = express()
 const httpServer = createServer(app)
