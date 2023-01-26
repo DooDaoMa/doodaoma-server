@@ -21,7 +21,7 @@ app.use(
 
 // register router
 app.use(authRouter)
-app.use('/api/account', accountRouter)
+app.use('/api', accountRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
   res.json('success')
