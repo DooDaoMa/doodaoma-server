@@ -4,12 +4,22 @@ import { Server } from 'socket.io'
 import cors from 'cors'
 import { authRouter } from './routes/authRoute'
 import { accountRouter } from './routes/account'
+import { devicesRouter } from './routes/devicesRoute'
 import { requireJWTAuth } from './config/jwt.config'
+import handler from './socket/handler'
 import { PORT } from './config/constant.config'
 
 const app = express()
 const httpServer = createServer(app)
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
+})
+
 const io = new Server(httpServer)
+handler.registerSocketHandler(io)
+
+app.use(cors())
 app.use(json())
 app.use(
   cors({
@@ -22,6 +32,7 @@ app.use(
 // register router
 app.use(authRouter)
 app.use('/api', accountRouter)
+app.use(devicesRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
   res.json('success')
@@ -29,8 +40,4 @@ app.get('/home', requireJWTAuth, (req, res) => {
 
 app.get('/', (req, res) => {
   res.json('Express + TypeScript server')
-})
-
-httpServer.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
 })

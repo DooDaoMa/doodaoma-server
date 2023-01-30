@@ -18,5 +18,7 @@ export const jwtAuth = new JwtStrategy(jwtOptions, async (payload, done) => {
     return done(err, false)
   }
 })
+
 passport.use(jwtAuth)
+
 export const requireJWTAuth = passport.authenticate('jwt', { session: false })

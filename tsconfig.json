@@ -3,7 +3,6 @@
     "target": "es6",
     "module": "commonjs",
     "rootDir": "src/",
-    "baseUrl": "src/",
     "outDir": "dist/",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

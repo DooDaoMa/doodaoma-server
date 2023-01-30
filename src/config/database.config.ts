@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
-import { DATABASE_URL } from './constant.config'
+import { DATABASE_URL, MONGODB_URL } from './constant.config'
 
 // Set up default mongoose connection
-const mongoDB = DATABASE_URL
-mongoose.connect(mongoDB, {
+mongoose.connect(MONGODB_URL, {
   dbName: 'doodaoma',
 })
 

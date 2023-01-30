@@ -1,10 +1,10 @@
 import crypto from 'crypto'
 import { Schema, Model } from 'mongoose'
 import { db } from '../config/database.config'
-import { IUser, IUserMethods } from 'types/user.types'
+import { IUser, IUserMethods } from '../types/user.types'
 
 // Define a schema
-export const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUser>({
   username: {
     type: String,
     required: true,
@@ -34,7 +34,7 @@ UserSchema.method('validPassword', function (password: string) {
   return this.hash === hash
 })
 
-export type UserModel = Model<IUser, {}, IUserMethods>
+type UserModel = Model<IUser, {}, IUserMethods>
 
 // Compile model from schema
 export const User = db.model<IUser, UserModel>('User', UserSchema)
