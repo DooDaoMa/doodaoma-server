@@ -15,7 +15,12 @@ httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
-const io = new Server(httpServer)
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    credentials: false,
+  },
+})
 handler.registerSocketHandler(io)
 
 app.use(cors())
