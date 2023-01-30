@@ -16,9 +16,8 @@ httpServer.listen(PORT, () => {
 })
 
 const io = new Server(httpServer, {
-  cors: {
-    origin: '*',
-    credentials: false,
+  allowRequest: (req, callback) => {
+    callback(null, true)
   },
 })
 handler.registerSocketHandler(io)
