@@ -5,7 +5,7 @@ import {
 } from 'express-paginate'
 import { requireJWTAuth } from '../config/jwt.config'
 import { User } from '../models/user'
-import { IUser } from 'types/user.types'
+import { IUser } from '../types/user.types'
 
 export const accountRouter = Router()
 
