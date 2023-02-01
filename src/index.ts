@@ -8,6 +8,7 @@ import { requireJWTAuth } from './config/jwt.config'
 import { PORT } from './config/constant.config'
 import { imagesRoute } from './routes/imagesRoute'
 import { setUpSocketHandler } from './socket/handler'
+import { reservationRouter } from './routes/reservationRoute'
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use(authRouter)
 app.use('/api', accountRouter)
 app.use('/api', devicesRouter)
 app.use('/api', imagesRoute)
+app.use('/api', reservationRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
   res.json('success')
