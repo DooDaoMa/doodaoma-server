@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import { Reservation } from '../models/reservation'
-import { getISOString } from '../utils/datetime'
-// import { isBefore, parseISO, format, isAfter } from 'date-fns'
-// import { generateDateTimeSlots, setTime } from '../utils/timeSlot'
 
 export const checkReservationPeriod = async (
   req: Request,
