@@ -8,6 +8,7 @@ import { devicesRouter } from './routes/devicesRoute'
 import { requireJWTAuth } from './config/jwt.config'
 import handler from './socket/handler'
 import { PORT } from './config/constant.config'
+import { reservationRouter } from './routes/reservationRoute'
 
 const app = express()
 const httpServer = createServer(app)
@@ -35,6 +36,7 @@ app.use(
 // register router
 app.use(authRouter)
 app.use('/api', accountRouter)
+app.use('/api', reservationRouter)
 app.use(devicesRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
