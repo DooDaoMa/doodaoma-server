@@ -8,11 +8,15 @@ const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: SECRET_KEY,
 }
-
-const jwtAuth = new JwtStrategy(jwtOptions, async (payload, done) => {
-  const user = await User.findOne({ username: payload.data })
-  if (user) done(null, true)
-  else done(null, false)
+export const jwtAuth = new JwtStrategy(jwtOptions, async (payload, done) => {
+  try {
+    const user = await User.findOne({ username: payload.data })
+    if (user) {
+      return done(null, user)
+    } else return done(null, false)
+  } catch (err) {
+    return done(err, false)
+  }
 })
 
 passport.use(jwtAuth)

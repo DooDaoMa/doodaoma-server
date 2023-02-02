@@ -3,6 +3,7 @@ import express, { json } from 'express'
 import { Server } from 'socket.io'
 import cors from 'cors'
 import { authRouter } from './routes/authRoute'
+import { accountRouter } from './routes/account'
 import { devicesRouter } from './routes/devicesRoute'
 import { requireJWTAuth } from './config/jwt.config'
 import handler from './socket/handler'
@@ -16,11 +17,18 @@ const httpServer = createServer(app).listen(PORT, () => {
 const io = new Server(httpServer)
 handler.registerSocketHandler(io)
 
-app.use(cors())
 app.use(json())
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://doodaoma-web.up.railway.app/'],
+    preflightContinue: true,
+    credentials: true,
+  }),
+)
 
 // register router
 app.use(authRouter)
+app.use('/api', accountRouter)
 app.use(devicesRouter)
 
 app.get('/home', requireJWTAuth, (req, res) => {
