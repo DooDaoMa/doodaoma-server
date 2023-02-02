@@ -23,7 +23,6 @@ const io = new Server(httpServer, {
 })
 handler.registerSocketHandler(io)
 
-app.use(cors())
 app.use(json())
 app.use(
   cors({
