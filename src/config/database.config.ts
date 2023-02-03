@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { DATABASE_URL, MONGODB_URL } from './constant.config'
+import { MONGODB_URL } from './constant.config'
 
 // Set up default mongoose connection
 mongoose.connect(MONGODB_URL, {
