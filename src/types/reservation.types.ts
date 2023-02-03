@@ -1,7 +1,7 @@
 export interface IReservation {
   username: string
-  telescopeId: number
-  createdAt: string
+  deviceId: String
   startTime: string
   endTime: string
+  status: string
 }
