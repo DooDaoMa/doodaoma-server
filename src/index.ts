@@ -1,21 +1,16 @@
 import { createServer } from 'http'
 import express, { json } from 'express'
-import { Server } from 'socket.io'
+import { Server } from 'ws'
 import cors from 'cors'
 import { authRouter } from './routes/authRoute'
 import { accountRouter } from './routes/account'
 import { devicesRouter } from './routes/devicesRoute'
 import { requireJWTAuth } from './config/jwt.config'
-import handler from './socket/handler'
 import { PORT } from './config/constant.config'
 
 const app = express()
-const httpServer = createServer(app).listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
-})
-
-const io = new Server(httpServer)
-handler.registerSocketHandler(io)
+const httpServer = createServer(app)
+const wss = new Server({ server: httpServer })
 
 app.use(json())
 app.use(
@@ -37,4 +32,16 @@ app.get('/home', requireJWTAuth, (req, res) => {
 
 app.get('/', (req, res) => {
   res.json('Express + TypeScript server')
+})
+
+wss.on('connection', (ws) => {
+  ws.on('message', (message: string) => {
+    console.log(`received ${message}`)
+    ws.send(`Hello, you sent -> ${message}`)
+  })
+  ws.send('Hi from WebSocket server')
+})
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
 })
