@@ -7,6 +7,7 @@ import { requireJWTAuth } from '../config/jwt.config'
 import { checkDeviceExist } from '../middlewares/device.middleware'
 import { checkReservationPeriod } from '../middlewares/reservation.middleware'
 import { Reservation } from '../models/reservation'
+// import { generateDateTimeSlots } from '../utils/timeSlot'
 
 export const reservationRouter = Router()
 
