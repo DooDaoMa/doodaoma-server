@@ -8,8 +8,6 @@ export const checkReservationPeriod = async (
 ) => {
   // Check if there are duplicated reservation time
   const { startTime, endTime, deviceId } = req.body
-  // const parsedStartTime = Date.parse(startTime)
-  // const parsedEndTime = Date.parse(endTime)
   try {
     const query = {
       deviceId,
