@@ -9,6 +9,9 @@ import { PORT } from './config/constant.config'
 import { imagesRoute } from './routes/imagesRoute'
 import { setUpSocketHandler } from './socket/handler'
 import { reservationRouter } from './routes/reservationRoute'
+import { timeSlotRouter } from './routes/timeSlotRoute'
+
+require('./services/createTimeSlot')
 
 const app = express()
 
@@ -29,6 +32,7 @@ app.use(
 )
 
 app.use(authRouter)
+app.use('/api', timeSlotRouter)
 app.use('/api', accountRouter)
 app.use('/api', devicesRouter)
 app.use('/api', imagesRoute)
