@@ -14,17 +14,11 @@ import { timeSlotRouter } from './routes/timeSlotRoute'
 require('./services/createTimeSlot')
 
 const app = express()
-const httpServer = createServer(app)
-
-httpServer.listen(PORT, () => {
+const httpServer = createServer(app).listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
-const io = new Server(httpServer, {
-  allowRequest: (req, callback) => {
-    callback(null, true)
-  },
-})
+const io = new Server(httpServer)
 handler.registerSocketHandler(io)
 
 app.use(json())
