@@ -7,3 +7,4 @@ export const PORT = process.env.PORT || 8000
 export const MONGODB_URL =
   process.env.MONGODB_URL || 'mongodb://localhost:27017'
 export const IS_DEBUG = process.env.NODE_ENV !== 'production'
+export const JOB_SCHEDULE = '0 0 * * *'
