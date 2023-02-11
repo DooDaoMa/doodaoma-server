@@ -26,9 +26,9 @@ accountRouter.get('/account', requireJWTAuth, (req, res) => {
   }
 })
 
-accountRouter.get('/account/:userId/images', async (req, res) => {
+accountRouter.get('/account/images', requireJWTAuth, async (req, res) => {
   try {
-    const { userId } = req.params
+    const userId = (req.user as IUser)._id
     const user = await User.findById(userId).populate('images')
     if (!user) {
       return res.status(404).json({ message: `Not found user id ${userId}` })
@@ -46,8 +46,8 @@ accountRouter.get('/account/:userId/images', async (req, res) => {
       }) || [],
     )
     res.status(200).json(images)
-  } catch (err) {
-    res.status(404).json({ message: err })
+  } catch (error) {
+    res.status(500).json({ message: error })
   }
 })
 

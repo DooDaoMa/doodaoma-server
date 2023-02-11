@@ -7,7 +7,7 @@ const devicesRouter = Router()
 devicesRouter.get('/devices', requireJWTAuth, async (req, res) => {
   try {
     const devices = await Device.find()
-    res.status(400).json(devices)
+    res.status(200).json(devices)
   } catch (error) {
     res.status(500).json({ message: error })
   }
