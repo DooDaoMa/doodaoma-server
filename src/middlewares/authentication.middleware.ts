@@ -32,7 +32,6 @@ export const checkDuplicateUsernameOrEmail = async (
   res: Response,
   next: NextFunction,
 ) => {
-  // Check duplicate username
   try {
     const user = await User.findOne({ username: req.body.username })
     if (user) {
@@ -43,7 +42,6 @@ export const checkDuplicateUsernameOrEmail = async (
     res.status(500).json({ message: err })
     return
   }
-  // Check duplicate email
   try {
     const user = await User.findOne({ username: req.body.email })
     if (user) {

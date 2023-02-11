@@ -1,9 +1,13 @@
+import { GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Router } from 'express'
 import {
   middleware as paginateMiddleware,
   getArrayPages,
 } from 'express-paginate'
+import { BUCKET_NAME } from '../config/constant.config'
 import { requireJWTAuth } from '../config/jwt.config'
+import { s3Client } from '../config/s3.config'
 import { User } from '../models/user'
 import { IUser } from '../types/user.types'
 
@@ -14,10 +18,36 @@ accountRouter.use(paginateMiddleware(10, 50))
 accountRouter.get('/account', requireJWTAuth, (req, res) => {
   const user = req.user as IUser
   if (user) {
-    res.status(200).send({
+    res.status(200).json({
+      id: user._id,
       username: user.username,
       email: user.email,
     })
+  }
+})
+
+accountRouter.get('/account/:userId/images', async (req, res) => {
+  try {
+    const { userId } = req.params
+    const user = await User.findById(userId).populate('images')
+    if (!user) {
+      return res.status(404).json({ message: `Not found user id ${userId}` })
+    }
+    const images = await Promise.all(
+      user.images?.map(async (image) => {
+        const command = new GetObjectCommand({
+          Bucket: BUCKET_NAME,
+          Key: `${image.userId}/${image.name}`,
+        })
+        const signedUrl = await getSignedUrl(s3Client, command, {
+          expiresIn: 60 * 60,
+        })
+        return { id: image._id, name: image.name, imageUrl: signedUrl }
+      }) || [],
+    )
+    res.status(200).json(images)
+  } catch (err) {
+    res.status(404).json({ message: err })
   }
 })
 

@@ -3,7 +3,6 @@ import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
 import { User } from '../models/user'
 import { SECRET_KEY } from './constant.config'
 
-// authentication Strategy
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: SECRET_KEY,
