@@ -12,11 +12,11 @@ const authRouter = Router()
 authRouter.post('/login', loginMiddleware, async (req, res) => {
   try {
     if (req.user) {
-      res.status(201).json(
-        sign({ data: req.body.username }, SECRET_KEY, {
+      res.status(201).json({
+        token: sign({ data: req.body.username }, SECRET_KEY, {
           expiresIn: '1h',
         }),
-      )
+      })
     }
   } catch (err) {
     res.status(500).json({ message: err })
