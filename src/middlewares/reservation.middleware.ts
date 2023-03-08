@@ -4,10 +4,6 @@ import { getISOString } from '../utils/datetime'
 // import { isBefore, parseISO, format, isAfter } from 'date-fns'
 // import { generateDateTimeSlots, setTime } from '../utils/timeSlot'
 
-// const date = new Date(new Date())
-// date.setDate(date.getDate() + 2)
-// const timeSlot = generateDateTimeSlots(date)
-
 export const checkReservationPeriod = async (
   req: Request,
   res: Response,
