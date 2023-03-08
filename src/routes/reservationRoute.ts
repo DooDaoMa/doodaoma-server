@@ -7,6 +7,7 @@ import { requireJWTAuth } from '../config/jwt.config'
 import { checkDeviceExist } from '../middlewares/device.middleware'
 import { checkReservationPeriod } from '../middlewares/reservation.middleware'
 import { Reservation } from '../models/reservation'
+import { getISOString } from '../utils/datetime'
 // import { generateDateTimeSlots } from '../utils/timeSlot'
 
 export const reservationRouter = Router()
@@ -23,10 +24,18 @@ reservationRouter.get('/reservations', async (req, res) => {
   const limit = +(req.query.limit || 10)
   const skip = +(req.skip || 0)
   const page = +(req.query.skip || 1)
+  const startTime = req.query.startTime || null
+  const endTime = req.query.endTime || null
+  const status = req.query.status || 'available'
   try {
+    const query = {
+      ...(startTime !== null && { startTime: { $gte: startTime } }),
+      ...(endTime !== null && { endTime: { $lte: endTime } }),
+      status,
+    }
     const [results, itemCount] = await Promise.all([
-      Reservation.find({}).limit(limit).skip(skip).lean().exec(),
-      Reservation.count({}),
+      Reservation.find(query).limit(limit).skip(skip).lean().exec(),
+      Reservation.count(query),
     ])
     const pageCount = Math.ceil(itemCount / limit)
     if (results) {
