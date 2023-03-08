@@ -6,7 +6,7 @@ import {
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
 
-const timeSlotRouter = Router()
+export const timeSlotRouter = Router()
 
 timeSlotRouter.use(paginateMiddleware(10, 50))
 
@@ -36,9 +36,12 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
 
 timeSlotRouter.post('/timeslot', async (req, res) => {
   const newVal = generateDateTimeSlots(new Date())
-  console.log(`add ${newVal.length} to TimeSlot collection`)
-  await TimeSlot.insertMany(newVal)
-  return res.status(201).send(newVal)
+  try {
+    const created = await TimeSlot.insertMany(newVal)
+    if (created) {
+      return res.status(201).json(created)
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
 })
-
-export { timeSlotRouter }
