@@ -20,7 +20,10 @@ const ReservationSchema = new Schema<IReservation>(
       type: String,
       required: true,
     },
-    status: String,
+    status: {
+      type: String,
+      default: 'available',
+    },
   },
   { timestamps: true },
 )
