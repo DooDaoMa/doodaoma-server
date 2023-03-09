@@ -4,15 +4,14 @@ export interface NinaWebSocketClient extends WebSocket {
   deviceId: string
 }
 
+export interface WebWebSocketClient extends WebSocket {
+  deviceId: string
+  userId: string
+}
+
 export interface IMessage {
   type: string
-  payload: {
+  payload?: {
     [any: string]: any
   }
 }
-
-export interface WebMessage extends IMessage {
-  deviceId: string
-}
-
-export type NinaMessage = IMessage

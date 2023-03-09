@@ -3,67 +3,60 @@ import { parse } from 'url'
 import { Server, WebSocket } from 'ws'
 import { Device } from '../models/device'
 import {
-  NinaMessage,
+  IMessage,
   NinaWebSocketClient,
-  WebMessage,
+  WebWebSocketClient,
 } from '../types/websocket.types'
 
 export const setUpSocketHandler = (httpServer: HttpServer) => {
-  const webWs = new Server({ noServer: true })
-  const ninaWs = new Server({ noServer: true })
+  const webWsServer = new Server({ noServer: true })
+  const ninaWsServer = new Server({ noServer: true })
 
-  webWs.on('connection', (ws) => {
-    ws.on('message', (message: string, isBinary: boolean) => {
-      const webMessage = JSON.parse(message) as WebMessage
-      console.log(`received ${message} in web`)
-
-      ninaWs.clients.forEach((client) => {
-        const ninaClient = client as NinaWebSocketClient
-        if (
-          ninaClient.deviceId === webMessage.deviceId &&
-          ninaClient.readyState === WebSocket.OPEN
-        ) {
-          ninaClient.send(message, { binary: isBinary })
-        }
+  webWsServer.on(
+    'connection',
+    (ws: WebWebSocketClient, req: IncomingMessage) => {
+      ws.on('message', (messageJson: string) => {
+        const message = JSON.parse(messageJson) as IMessage
+        console.log(`received ${messageJson} in web`)
+        broadcastToNinaByDeviceId(ws, ninaWsServer, message)
       })
-    })
-    console.log('Connected from web')
-  })
+      ws.on('close', () => {
+        broadcastToNinaByDeviceId(ws, ninaWsServer, { type: 'resetUserId' })
+        console.log('Disconnected from web')
+      })
+      setUpWebWebSocketClient(ws, req)
+      broadcastToNinaByDeviceId(ws, ninaWsServer, {
+        type: 'setUserId',
+        payload: { userId: ws.userId },
+      })
+      console.log('Connected from web')
+    },
+  )
 
-  ninaWs.on(
+  ninaWsServer.on(
     'connection',
     async (ws: NinaWebSocketClient, req: IncomingMessage) => {
-      ws.on('message', (message: string) => {
-        const ninaMessage = JSON.parse(message) as NinaMessage
-        console.log(`received ${message} in nina`)
+      ws.on('message', (messageJson: string) => {
+        const message = JSON.parse(messageJson) as IMessage
+        console.log(`received ${messageJson} in nina`)
       })
       ws.on('close', () => {
         console.log('Disconnected from nina')
       })
-
-      await upsertDevice(
-        req,
-        (deviceId) => {
-          ws.deviceId = deviceId
-          console.log('Connected from nina')
-        },
-        (error) => {
-          console.log(error)
-          ws.close()
-        },
-      )
+      await setUpNinaWebSocketClient(ws, req)
+      console.log('Connected from nina')
     },
   )
 
   httpServer.on('upgrade', (req, socket, head) => {
     const { pathname } = parse(req.url || '/')
     if (pathname === '/web') {
-      webWs.handleUpgrade(req, socket, head, (ws) => {
-        webWs.emit('connection', ws, req)
+      webWsServer.handleUpgrade(req, socket, head, (ws) => {
+        webWsServer.emit('connection', ws, req)
       })
     } else if (pathname === '/nina') {
-      ninaWs.handleUpgrade(req, socket, head, (ws) => {
-        ninaWs.emit('connection', ws, req)
+      ninaWsServer.handleUpgrade(req, socket, head, (ws) => {
+        ninaWsServer.emit('connection', ws, req)
       })
     } else {
       socket.destroy()
@@ -71,10 +64,26 @@ export const setUpSocketHandler = (httpServer: HttpServer) => {
   })
 }
 
-async function upsertDevice(
+function setUpWebWebSocketClient(ws: WebWebSocketClient, req: IncomingMessage) {
+  try {
+    const searchParams = new URLSearchParams(req.url?.split('?')[1])
+    const userId = searchParams.get('userId') || ''
+    const deviceId = searchParams.get('deviceId') || ''
+    if (!userId || !deviceId) {
+      console.log('Invalid userId or deviceId')
+      return ws.close()
+    }
+    ws.userId = userId
+    ws.deviceId = deviceId
+  } catch (error) {
+    console.log(error)
+    ws.close()
+  }
+}
+
+async function setUpNinaWebSocketClient(
+  ws: NinaWebSocketClient,
   req: IncomingMessage,
-  onSuccess: (deviceId: string) => void,
-  onError: (error: Error) => void,
 ) {
   try {
     const searchParams = new URLSearchParams(req.url?.split('?')[1])
@@ -83,16 +92,35 @@ async function upsertDevice(
     const description = searchParams.get('description') || ''
     const driverInfo = searchParams.get('driverInfo') || ''
     const driverVersion = searchParams.get('driverVersion') || ''
+
     if (!deviceId) {
-      return onError(new Error('Invalid deviceId'))
+      console.log('Invalid deviceId')
+      return ws.close()
     }
     await Device.findOneAndUpdate(
       { deviceId },
       { name, description, driverInfo, driverVersion },
       { upsert: true },
     )
-    onSuccess(deviceId)
+    ws.deviceId = deviceId
   } catch (error) {
-    onError(error as Error)
+    console.log(error)
+    ws.close()
   }
+}
+
+function broadcastToNinaByDeviceId(
+  ws: WebWebSocketClient,
+  ninaWsServer: Server,
+  webMessage: IMessage,
+) {
+  ninaWsServer.clients.forEach((client) => {
+    const ninaClient = client as NinaWebSocketClient
+    if (
+      ninaClient.deviceId === ws.deviceId &&
+      ninaClient.readyState === WebSocket.OPEN
+    ) {
+      ninaClient.send(JSON.stringify(webMessage))
+    }
+  })
 }
