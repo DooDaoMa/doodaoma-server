@@ -13,11 +13,11 @@ const ReservationSchema = new Schema<IReservation>(
       required: true,
     },
     startTime: {
-      type: String,
+      type: Date,
       required: true,
     },
     endTime: {
-      type: String,
+      type: Date,
       required: true,
     },
     status: {

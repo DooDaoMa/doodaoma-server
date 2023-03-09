@@ -11,13 +11,13 @@ export const checkReservationPeriod = async (
 ) => {
   // Check if there are duplicated reservation time
   const { startTime, endTime, deviceId } = req.body
-  const parsedStartTime = Date.parse(startTime)
-  const parsedEndTime = Date.parse(endTime)
+  // const parsedStartTime = Date.parse(startTime)
+  // const parsedEndTime = Date.parse(endTime)
   try {
     const query = {
       deviceId,
-      startTime: { $gte: getISOString(parsedStartTime) },
-      endTime: { $lte: getISOString(parsedEndTime) },
+      startTime: { $gte: startTime },
+      endTime: { $lte: endTime },
     }
     const reservationList = await Reservation.find(query)
     if (reservationList.length > 0) {
@@ -27,8 +27,8 @@ export const checkReservationPeriod = async (
     }
     req.body = {
       ...req.body,
-      startTime: getISOString(parsedStartTime),
-      endTime: getISOString(parsedEndTime),
+      startTime,
+      endTime,
     }
     next()
   } catch (error) {
