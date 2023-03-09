@@ -4,9 +4,9 @@ import { IReservation } from '../types/reservation.types'
 
 const ReservationSchema = new Schema<IReservation>(
   {
-    username: {
-      type: String,
-      required: true,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
     deviceId: {
       type: String,

@@ -1,5 +1,7 @@
+import { IUser } from './user.types'
+
 export interface IReservation {
-  username: string
+  user: IUser
   deviceId: String
   startTime: Date
   endTime: Date
