@@ -4,16 +4,22 @@ import { ITimeSlot } from '../types/timeSlot.types'
 
 const TimeSlotSchema = new Schema<ITimeSlot>({
   startTime: {
-    type: String,
+    type: Date,
     required: true,
+    unique: true,
   },
   endTime: {
-    type: String,
+    type: Date,
     required: true,
+    unique: true,
   },
   username: {
     type: String,
     default: null,
+  },
+  status: {
+    type: String,
+    default: 'available',
   },
 })
 

@@ -1,5 +1,6 @@
 export interface ITimeSlot {
-  startTime: string
-  endTime: string
+  startTime: Date
+  endTime: Date
   username: string
+  status: string
 }
