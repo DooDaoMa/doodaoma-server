@@ -13,9 +13,9 @@ export const setTime = (x: Date, h = 0, m = 0, s = 0, ms = 0): Date => {
 }
 
 export const generateDateTimeSlots = (date: Date) => {
-  const from = setTime(date, 0)
+  const from = setTime(date, 16)
   const to = setTime(date, 24)
-  const step = (x: Date): Date => addMinutes(x, 120)
+  const step = (x: Date): Date => addMinutes(x, 60)
 
   const blocks = []
   let cursor = from
