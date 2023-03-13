@@ -22,8 +22,8 @@ export const generateDateTimeSlots = (date: Date) => {
 
   while (isBefore(cursor, to)) {
     blocks.push({
-      startTime: format(cursor, 'dd MM yyyy kk:mm'),
-      endTime: format(step(cursor), 'dd MM yyyy kk:mm'),
+      startTime: cursor,
+      endTime: step(cursor),
     })
     cursor = step(cursor)
   }
