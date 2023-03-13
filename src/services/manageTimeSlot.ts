@@ -12,3 +12,18 @@ schedule('0 0 * * 0', async () => {
   )
   await TimeSlot.insertMany(newTimeSlot)
 })
+
+schedule('0 0 * * *', async () => {
+  const query = {
+    startTime: { $gte: startOfYesterday() },
+    endTime: { $lte: endOfYesterday() },
+  }
+  const yesterdaySlot = await TimeSlot.find(query)
+  if (yesterdaySlot) {
+    await TimeSlot.deleteMany(yesterdaySlot)
+    console.log(
+      `remove ${yesterdaySlot[yesterdaySlot.length]} from TimeSlot collection`,
+    )
+  }
+  console.log("there're no any time slots in yesterday")
+})
