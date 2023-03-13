@@ -3,6 +3,7 @@ import {
   getArrayPages,
   middleware as paginateMiddleware,
 } from 'express-paginate'
+import { addDays } from 'date-fns'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
 
@@ -35,9 +36,10 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
 })
 
 timeSlotRouter.post('/timeslot', async (req, res) => {
-  const newVal = generateDateTimeSlots(new Date())
+  const addDate = req.body.date || new Date()
+  const newTimeSlot = generateDateTimeSlots(addDate)
   try {
-    const created = await TimeSlot.insertMany(newVal)
+    const created = await TimeSlot.insertMany(newTimeSlot)
     if (created) {
       return res.status(201).json(created)
     }
