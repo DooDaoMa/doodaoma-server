@@ -5,7 +5,7 @@ import {
   setSeconds,
   addMinutes,
   setMilliseconds,
-  format,
+  addDays,
 } from 'date-fns'
 
 export const setTime = (x: Date, h = 0, m = 0, s = 0, ms = 0): Date => {
@@ -13,8 +13,9 @@ export const setTime = (x: Date, h = 0, m = 0, s = 0, ms = 0): Date => {
 }
 
 export const generateDateTimeSlots = (date: Date) => {
+  // from 4 p.m. to 6 a.m.
   const from = setTime(date, 16)
-  const to = setTime(date, 24)
+  const to = setTime(addDays(date, 1), 6)
   const step = (x: Date): Date => addMinutes(x, 60)
 
   const blocks = []
