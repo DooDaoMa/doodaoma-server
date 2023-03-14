@@ -11,7 +11,7 @@ import { setUpSocketHandler } from './socket/handler'
 import { reservationRouter } from './routes/reservationRoute'
 import { timeSlotRouter } from './routes/timeSlotRoute'
 
-require('./services/createTimeSlot')
+require('./services/manageTimeSlot')
 
 const app = express()
 
