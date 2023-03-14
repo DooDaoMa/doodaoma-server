@@ -1,9 +1,6 @@
 import { Router } from 'express'
-import {
-  getArrayPages,
-  middleware as paginateMiddleware,
-} from 'express-paginate'
-import { addDays, parseISO } from 'date-fns'
+import { middleware as paginateMiddleware } from 'express-paginate'
+import { parseISO } from 'date-fns'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
 
@@ -12,9 +9,6 @@ export const timeSlotRouter = Router()
 timeSlotRouter.use(paginateMiddleware(10, 50))
 
 timeSlotRouter.get('/timeslots', async (req, res) => {
-  const limit = +(req.query.limit || 10)
-  const skip = +(req.skip || 0)
-  const page = +(req.query.skip || 1)
   const startTime = req.query.startTime || null
   const endTime = req.query.endTime || null
 
@@ -24,16 +18,13 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
       ...(endTime !== null && { endTime: { $lte: endTime } }),
     }
     const [results, itemCount] = await Promise.all([
-      TimeSlot.find(query).limit(limit).skip(skip).lean().exec(),
+      TimeSlot.find(query).lean().exec(),
       TimeSlot.count({}),
     ])
-    const pageCount = Math.ceil(itemCount / limit)
     if (results) {
       return res.status(200).json({
         data: results,
-        pageCount,
         itemCount,
-        pages: getArrayPages(req)(3, pageCount, page),
       })
     }
     return res.status(404).json({ message: 'There are no any time slots' })
@@ -50,6 +41,24 @@ timeSlotRouter.post('/timeslot', async (req, res) => {
     if (created) {
       return res.status(201).json(created)
     }
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+})
+
+timeSlotRouter.put('/timeslot', async (req, res) => {
+  const toUpdatedList = req.body.updatedList || []
+  const username = req.body.username
+  const status = req.body.status
+  try {
+    const updatedTimeSlot = await TimeSlot.updateMany(
+      { _id: { $in: toUpdatedList } },
+      { $set: { status, username } },
+    )
+    if (updatedTimeSlot.matchedCount > 0) {
+      return res.status(200).json({ message: updatedTimeSlot })
+    }
+    return res.status(404).json({ message: 'There is no any time slot' })
   } catch (error) {
     return res.status(500).json({ message: error })
   }
