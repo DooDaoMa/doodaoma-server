@@ -12,4 +12,9 @@ export const AWS_REGION = 'ap-southeast-1'
 export const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || 'aws access key'
 export const AWS_SECRET_ACCESS_KEY =
   process.env.AWS_SECRET_ACCESS_KEY || 'aws secret access key'
+
 export const JOB_SCHEDULE = '0 0 * * *'
+export const CREATE_TIMESLOT_SCHEDULE =
+  process.env.CREATE_TIMESLOT_SCHEDULE || '0 0 * * 0'
+export const DELETE_TIMESLOT_SCHEDULE =
+  process.env.DELETE_TIMESLOT_SCHEDULE || '0 0 * * *'
