@@ -3,7 +3,7 @@ import {
   getArrayPages,
   middleware as paginateMiddleware,
 } from 'express-paginate'
-import { addDays } from 'date-fns'
+import { addDays, parseISO } from 'date-fns'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
 
@@ -15,10 +15,16 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
   const limit = +(req.query.limit || 10)
   const skip = +(req.skip || 0)
   const page = +(req.query.skip || 1)
+  const startTime = req.query.startTime || null
+  const endTime = req.query.endTime || null
 
   try {
+    const query = {
+      ...(startTime !== null && { startTime: { $gte: startTime } }),
+      ...(endTime !== null && { endTime: { $lte: endTime } }),
+    }
     const [results, itemCount] = await Promise.all([
-      TimeSlot.find({}).limit(limit).skip(skip).lean().exec(),
+      TimeSlot.find(query).limit(limit).skip(skip).lean().exec(),
       TimeSlot.count({}),
     ])
     const pageCount = Math.ceil(itemCount / limit)
@@ -30,13 +36,14 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
         pages: getArrayPages(req)(3, pageCount, page),
       })
     }
+    return res.status(404).json({ message: 'There are no any time slots' })
   } catch (error) {
     return res.status(500).json(error)
   }
 })
 
 timeSlotRouter.post('/timeslot', async (req, res) => {
-  const addDate = req.body.date || new Date()
+  const addDate = parseISO(req.body.date) || new Date()
   const newTimeSlot = generateDateTimeSlots(addDate)
   try {
     const created = await TimeSlot.insertMany(newTimeSlot)
