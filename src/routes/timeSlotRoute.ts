@@ -45,3 +45,21 @@ timeSlotRouter.post('/timeslot', async (req, res) => {
     return res.status(500).json({ message: error })
   }
 })
+
+timeSlotRouter.put('/timeslot', async (req, res) => {
+  const toUpdatedList = req.body.updatedList || []
+  const username = req.body.username
+  const status = req.body.status
+  try {
+    const updatedTimeSlot = await TimeSlot.updateMany(
+      { _id: { $in: toUpdatedList } },
+      { $set: { status, username } },
+    )
+    if (updatedTimeSlot.matchedCount > 0) {
+      return res.status(200).json({ message: updatedTimeSlot })
+    }
+    return res.status(404).json({ message: 'There is no any time slot' })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+})
