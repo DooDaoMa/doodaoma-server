@@ -2,8 +2,12 @@ import { schedule } from 'node-cron'
 import { startOfYesterday, endOfYesterday, addDays } from 'date-fns'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
+import {
+  CREATE_TIMESLOT_SCHEDULE,
+  DELETE_TIMESLOT_SCHEDULE,
+} from '../config/constant.config'
 
-schedule('0 0 * * 2', async () => {
+schedule(CREATE_TIMESLOT_SCHEDULE, async () => {
   const newTimeSlot = []
   for (let i = 0; i < 7; i++) {
     newTimeSlot.push(...generateDateTimeSlots(addDays(new Date(), i)))
@@ -20,7 +24,7 @@ schedule('0 0 * * 2', async () => {
   }
 })
 
-schedule('0 0 * * *', async () => {
+schedule(DELETE_TIMESLOT_SCHEDULE, async () => {
   const query = {
     startTime: { $gte: startOfYesterday() },
     endTime: { $lte: endOfYesterday() },
@@ -28,12 +32,8 @@ schedule('0 0 * * *', async () => {
   try {
     const yesterdaySlot = await TimeSlot.find(query)
     if (yesterdaySlot) {
-      await TimeSlot.deleteMany(yesterdaySlot)
-      console.log(
-        `remove ${
-          yesterdaySlot[yesterdaySlot.length]
-        } from TimeSlot collection`,
-      )
+      const deletedSlot = await TimeSlot.deleteMany(query)
+      console.log(`remove ${deletedSlot.deletedCount} from TimeSlot collection`)
     }
     console.log("there're no any time slots in yesterday")
   } catch (error) {
