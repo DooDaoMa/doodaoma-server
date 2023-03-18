@@ -12,6 +12,6 @@ export interface WebWebSocketClient extends WebSocket {
 export interface IMessage {
   type: string
   payload?: {
-    [any: string]: any
+    [key: string]: any
   }
 }
