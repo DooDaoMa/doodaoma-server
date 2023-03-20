@@ -33,6 +33,29 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
   }
 })
 
+timeSlotRouter.get('/timeslot/now', async (req, res) => {
+  const now = new Date()
+
+  if (now.getHours() < 16 || now.getHours() > 6)
+    return res.status(404).json({ message: 'out of service time' })
+  try {
+    const query = {
+      startTime: {
+        $gte: now.getTime(),
+      },
+      endTime: {
+        $lte: now.getTime(),
+      },
+    }
+    const currentTimeSlot = await TimeSlot.findOne(query)
+    if (currentTimeSlot) {
+      return res.status(200).json({ data: currentTimeSlot })
+    }
+  } catch (error) {
+    return res.status(500).json(error)
+  }
+})
+
 timeSlotRouter.post('/timeslot', async (req, res) => {
   const addDate = parseISO(req.body.date) || new Date()
   const newTimeSlot = generateDateTimeSlots(addDate)
