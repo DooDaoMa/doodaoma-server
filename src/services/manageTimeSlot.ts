@@ -34,8 +34,9 @@ schedule(DELETE_TIMESLOT_SCHEDULE, async () => {
     if (yesterdaySlot) {
       const deletedSlot = await TimeSlot.deleteMany(query)
       console.log(`remove ${deletedSlot.deletedCount} from TimeSlot collection`)
+    } else {
+      console.log("there're no any time slots in yesterday")
     }
-    console.log("there're no any time slots in yesterday")
   } catch (error) {
     console.error(error)
   }
