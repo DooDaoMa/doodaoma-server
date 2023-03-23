@@ -13,6 +13,8 @@ import { timeSlotRouter } from './routes/timeSlotRoute'
 
 require('./services/manageTimeSlot')
 
+process.env.TZ = 'Asia/Bangkok'
+
 const app = express()
 
 const httpServer = createServer(app)
