@@ -1,5 +1,6 @@
 import { schedule } from 'node-cron'
 import { startOfYesterday, endOfYesterday, addDays } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
 import {
@@ -7,10 +8,15 @@ import {
   DELETE_TIMESLOT_SCHEDULE,
 } from '../config/constant.config'
 
+const timeZone = 'Asia/Bangkok'
+
 schedule(CREATE_TIMESLOT_SCHEDULE, async () => {
   const newTimeSlot = []
+
   for (let i = 0; i < 7; i++) {
-    newTimeSlot.push(...generateDateTimeSlots(addDays(new Date(), i)))
+    const date = addDays(new Date(), i)
+    const zonedDate = utcToZonedTime(date, timeZone)
+    newTimeSlot.push(...generateDateTimeSlots(zonedDate))
   }
   try {
     await TimeSlot.insertMany(newTimeSlot)

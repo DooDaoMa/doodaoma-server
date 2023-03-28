@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { middleware as paginateMiddleware } from 'express-paginate'
 import { parseISO } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
 
@@ -58,7 +59,9 @@ timeSlotRouter.get('/timeslot/now', async (req, res) => {
 
 timeSlotRouter.post('/timeslot', async (req, res) => {
   const addDate = parseISO(req.body.date) || new Date()
-  const newTimeSlot = generateDateTimeSlots(addDate)
+  const timeZone = 'Asia/Bangkok'
+  const zonedDate = utcToZonedTime(addDate, timeZone)
+  const newTimeSlot = generateDateTimeSlots(zonedDate)
   try {
     const created = await TimeSlot.insertMany(newTimeSlot)
     if (created) {
