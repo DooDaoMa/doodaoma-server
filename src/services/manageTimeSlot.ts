@@ -6,14 +6,15 @@ import { generateDateTimeSlots } from '../utils/timeSlot'
 import {
   CREATE_TIMESLOT_SCHEDULE,
   DELETE_TIMESLOT_SCHEDULE,
+  CREATE_SCHEDULE_DATE,
 } from '../config/constant.config'
 
 const timeZone = 'Asia/Bangkok'
 
 schedule(CREATE_TIMESLOT_SCHEDULE, async () => {
   const newTimeSlot = []
-
-  for (let i = 0; i < 7; i++) {
+  if (CREATE_SCHEDULE_DATE < 0) return
+  for (let i = 0; i < CREATE_SCHEDULE_DATE; i++) {
     const date = addDays(new Date(), i)
     const zonedDate = utcToZonedTime(date, timeZone)
     newTimeSlot.push(...generateDateTimeSlots(zonedDate))
@@ -21,8 +22,8 @@ schedule(CREATE_TIMESLOT_SCHEDULE, async () => {
   try {
     await TimeSlot.insertMany(newTimeSlot)
     console.log(
-      `add ${newTimeSlot.length} time slot from ${newTimeSlot[0]} - ${
-        newTimeSlot[newTimeSlot.length - 1]
+      `add ${newTimeSlot.length} time slot from ${newTimeSlot[0].startTime} - ${
+        newTimeSlot[newTimeSlot.length - 1].endTime
       } to TimeSlot collection`,
     )
   } catch (error) {

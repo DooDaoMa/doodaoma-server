@@ -18,3 +18,4 @@ export const CREATE_TIMESLOT_SCHEDULE =
   process.env.CREATE_TIMESLOT_SCHEDULE || '0 0 * * 0'
 export const DELETE_TIMESLOT_SCHEDULE =
   process.env.DELETE_TIMESLOT_SCHEDULE || '0 0 * * *'
+export const CREATE_SCHEDULE_DATE = process.env.CREATE_SCHEDULE_DATE || 7
