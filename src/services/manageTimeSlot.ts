@@ -1,5 +1,5 @@
 import { schedule } from 'node-cron'
-import { startOfYesterday, endOfYesterday, addDays } from 'date-fns'
+import { startOfToday, addDays } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import { TimeSlot } from '../models/timeSlot'
 import { generateDateTimeSlots } from '../utils/timeSlot'
@@ -33,8 +33,7 @@ schedule(CREATE_TIMESLOT_SCHEDULE, async () => {
 
 schedule(DELETE_TIMESLOT_SCHEDULE, async () => {
   const query = {
-    startTime: { $gte: startOfYesterday() },
-    endTime: { $lte: endOfYesterday() },
+    endTime: { $lte: startOfToday() },
   }
   try {
     const yesterdaySlot = await TimeSlot.find(query)
