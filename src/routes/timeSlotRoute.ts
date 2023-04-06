@@ -13,10 +13,15 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
   const startTime = req.query.startTime || null
   const endTime = req.query.endTime || null
 
+  const username = req.query.username || ''
+  const status = req.query.status || 'available'
+
   try {
     const query = {
       ...(startTime !== null && { startTime: { $gte: startTime } }),
       ...(endTime !== null && { endTime: { $lte: endTime } }),
+      username,
+      status,
     }
     const [results, itemCount] = await Promise.all([
       TimeSlot.find(query).lean().exec(),
