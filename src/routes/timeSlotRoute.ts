@@ -13,7 +13,7 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
   const startTime = req.query.startTime || null
   const endTime = req.query.endTime || null
 
-  const username = req.query.username || ''
+  const username = req.query.username || null
   const status = req.query.status || 'available'
 
   try {
