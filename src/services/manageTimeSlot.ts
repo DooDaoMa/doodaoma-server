@@ -13,12 +13,17 @@ const timeZone = 'Asia/Bangkok'
 
 schedule(CREATE_TIMESLOT_SCHEDULE, async () => {
   const newTimeSlot = []
-  if (CREATE_SCHEDULE_DATE < 0) return
-  for (let i = 0; i < CREATE_SCHEDULE_DATE; i++) {
-    const date = addDays(new Date(), i)
-    const zonedDate = utcToZonedTime(date, timeZone)
-    newTimeSlot.push(...generateDateTimeSlots(zonedDate))
-  }
+  const createNum = Number(CREATE_SCHEDULE_DATE)
+  if (createNum < 0) return
+
+  const date = addDays(new Date(), createNum)
+  const zonedDate = utcToZonedTime(date, timeZone)
+  newTimeSlot.push(...generateDateTimeSlots(zonedDate))
+  // for (let i = 0; i < createNum; i++) {
+  //   const date = addDays(new Date(), i)
+  //   const zonedDate = utcToZonedTime(date, timeZone)
+  //   newTimeSlot.push(...generateDateTimeSlots(zonedDate))
+  // }
   try {
     await TimeSlot.insertMany(newTimeSlot)
     console.log(
