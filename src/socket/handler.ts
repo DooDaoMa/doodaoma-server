@@ -38,13 +38,18 @@ export const setUpSocketHandler = (httpServer: HttpServer) => {
     async (ws: NinaWebSocketClient, req: IncomingMessage) => {
       ws.on('message', (messageJson: string) => {
         const message = JSON.parse(messageJson) as IMessage
-        console.log(`received ${messageJson} in nina`)
+        console.log(`received ${messageJson} in NINA`)
+        broadcastToWeb(webWsServer, message)
       })
       ws.on('close', () => {
-        console.log('Disconnected from nina')
+        broadcastToWeb(webWsServer, {
+          type: 'sendMessage',
+          payload: { message: 'Disconnected from NINA' },
+        })
+        console.log('Disconnected from NINA')
       })
       await setUpNinaWebSocketClient(ws, req)
-      console.log('Connected from nina')
+      console.log('Connected from NINA')
     },
   )
 
@@ -112,7 +117,7 @@ async function setUpNinaWebSocketClient(
 function broadcastToNinaByDeviceId(
   ws: WebWebSocketClient,
   ninaWsServer: Server,
-  webMessage: IMessage,
+  message: IMessage,
 ) {
   ninaWsServer.clients.forEach((client) => {
     const ninaClient = client as NinaWebSocketClient
@@ -120,7 +125,15 @@ function broadcastToNinaByDeviceId(
       ninaClient.deviceId === ws.deviceId &&
       ninaClient.readyState === WebSocket.OPEN
     ) {
-      ninaClient.send(JSON.stringify(webMessage))
+      ninaClient.send(JSON.stringify(message))
+    }
+  })
+}
+
+function broadcastToWeb(webWsServer: Server, message: IMessage) {
+  webWsServer.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(message))
     }
   })
 }
