@@ -24,7 +24,7 @@ export function upgradeWebPath(
       console.error('Invalid userId or deviceId')
       return socket.destroy()
     }
-    console.log('before')
+
     const matchedNinaClient = findConnectedNinaClientByDeviceId(
       ninaWsServer,
       deviceId,
