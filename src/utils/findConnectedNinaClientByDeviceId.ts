@@ -1,5 +1,5 @@
 import WebSocket, { Server } from 'ws'
-import { NinaWebSocketClient } from '../../types/websocket.types'
+import { NinaWebSocketClient } from '../types/websocket.types'
 
 export function findConnectedNinaClientByDeviceId(
   ninaWsServer: Server<NinaWebSocketClient>,

@@ -4,7 +4,7 @@ import {
   NinaWebSocketClient,
   WebWebSocketClient,
 } from '../../types/websocket.types'
-import { findConnectedWebClientByDeviceId } from '../utils/findConnectedWebClientByDeviceId'
+import { findConnectedWebClientByDeviceId } from '../../utils/findConnectedWebClientByDeviceId'
 
 export default function (
   webWsServer: Server<WebWebSocketClient>,
