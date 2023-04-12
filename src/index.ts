@@ -7,9 +7,9 @@ import { devicesRouter } from './routes/devicesRoute'
 import { requireJWTAuth } from './config/jwt.config'
 import { PORT } from './config/constant.config'
 import { imagesRoute } from './routes/imagesRoute'
-import { setUpSocketHandler } from './socket/handler'
 import { reservationRouter } from './routes/reservationRoute'
 import { timeSlotRouter } from './routes/timeSlotRoute'
+import initSocket from './socket/initSocket'
 
 require('./services/manageTimeSlot')
 
@@ -18,7 +18,7 @@ process.env.TZ = 'Asia/Bangkok'
 const app = express()
 
 const httpServer = createServer(app)
-setUpSocketHandler(httpServer)
+initSocket(httpServer)
 
 app.use(json())
 app.use(
