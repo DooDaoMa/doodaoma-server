@@ -20,7 +20,7 @@ timeSlotRouter.get('/timeslots', async (req, res) => {
     const query = {
       ...(startTime !== null && { startTime: { $gte: startTime } }),
       ...(endTime !== null && { endTime: { $lte: endTime } }),
-      username,
+      ...(username !== null && { username }),
       ...(status !== null && { status }),
     }
     const [results, itemCount] = await Promise.all([
