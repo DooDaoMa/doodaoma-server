@@ -6,4 +6,5 @@ export interface IImage {
   name: string
   userId: string
   user?: IUser
+  createdAt: string
 }

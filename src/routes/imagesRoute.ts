@@ -35,10 +35,12 @@ imagesRoute.get('/images/:imageId', requireJWTAuth, async (req, res) => {
     const signedUrl = await getSignedUrl(s3Client, getCommand, {
       expiresIn: 60 * 60,
     })
-    console.log(image)
-    res
-      .status(200)
-      .json({ id: image.id, name: image.name, imageUrl: signedUrl })
+    res.status(200).json({
+      id: image.id,
+      name: image.name,
+      imageUrl: signedUrl,
+      createdAt: image.createdAt,
+    })
   } catch (error) {
     res.status(500).json({ message: error })
   }
