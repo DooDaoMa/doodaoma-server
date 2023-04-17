@@ -35,11 +35,11 @@ accountRouter.get('/account/images', requireJWTAuth, async (req, res) => {
     }
     const images = await Promise.all(
       user.images?.map(async (image) => {
-        const command = new GetObjectCommand({
+        const getCommand = new GetObjectCommand({
           Bucket: BUCKET_NAME,
           Key: `${image.userId}/${image.name}`,
         })
-        const signedUrl = await getSignedUrl(s3Client, command, {
+        const signedUrl = await getSignedUrl(s3Client, getCommand, {
           expiresIn: 60 * 60,
         })
         return { id: image._id, name: image.name, imageUrl: signedUrl }
@@ -64,7 +64,7 @@ accountRouter.get('/accounts', requireJWTAuth, async (req, res, next) => {
     const pageCount = Math.ceil(itemCount / limit)
     if (results) {
       res.status(200).send({
-        data: results.map((user: IUser) => ({
+        data: results.map((user) => ({
           username: user.username,
           email: user.email,
         })),
