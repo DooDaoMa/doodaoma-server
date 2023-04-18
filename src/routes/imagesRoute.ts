@@ -38,6 +38,7 @@ imagesRoute.get('/images/:imageId', requireJWTAuth, async (req, res) => {
     res.status(200).json({
       id: image.id,
       name: image.name,
+      displayName: image.displayName,
       imageUrl: signedUrl,
       createdAt: image.createdAt,
     })
@@ -51,7 +52,7 @@ imagesRoute.post('/images', upload.single('imageFile'), async (req, res) => {
     if (req.file === undefined) {
       return res.status(400).json({ message: 'File not valid' })
     }
-    const { userId } = req.body
+    const { userId, displayName } = req.body
     if (!userId) {
       return res.status(400).json({ message: 'Invalid user id' })
     }
@@ -70,6 +71,7 @@ imagesRoute.post('/images', upload.single('imageFile'), async (req, res) => {
     await Image.create({
       userId,
       name: originalname,
+      displayName,
     })
     res.status(201).json({ message: 'Uploaded image successfully' })
   } catch (error) {

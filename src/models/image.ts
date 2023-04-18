@@ -6,6 +6,7 @@ const ImageSchema = new Schema(
   {
     name: String,
     userId: String,
+    displayName: String,
   },
   { timestamps: true },
 )

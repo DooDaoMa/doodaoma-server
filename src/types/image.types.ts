@@ -5,6 +5,7 @@ export interface IImage {
   _id: Types.ObjectId
   name: string
   userId: string
+  displayName: string
   user?: IUser
   createdAt: string
 }
