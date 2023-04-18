@@ -6,8 +6,11 @@ import {
   WebWebSocketClient,
 } from '../../types/websocket.types'
 import { findConnectedNinaClientByDeviceId } from '../../utils/findConnectedNinaClientByDeviceId'
+import { Reservation } from '../../models/reservation'
 
-export function upgradeWebPath(
+const TEST_ACCOUNT_USER_ID = '643ed4833bc953022ae2a87a'
+
+export async function upgradeWebPath(
   req: IncomingMessage,
   socket: internal.Duplex,
   head: Buffer,
@@ -34,9 +37,23 @@ export function upgradeWebPath(
       return socket.destroy()
     }
 
-    // TODO: check if in reservation time
+    if (userId !== TEST_ACCOUNT_USER_ID) {
+      const now = new Date()
+      const currentReservation = await Reservation.findOne({
+        startTime: {
+          $gte: now.getTime(),
+        },
+        endTime: {
+          $lte: now.getTime(),
+        },
+      })
+      if (currentReservation === null) {
+        console.error('Not on reservation time')
+        return socket.destroy()
+      }
+    }
   } catch (error) {
-    console.error('Upgrade web failed: ' + error)
+    console.error('Other error ' + error)
     return socket.destroy()
   }
   webWsServer.handleUpgrade(req, socket, head, (ws) => {
